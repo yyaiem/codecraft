@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form - codeCraft</title>
+</head>
+
+<body>
+    <div id="sec1">
+        <h2>codeCraft : JavaScript Edition</h2>
+        <input type="text" name="id" id="id">
+        <button onclick="GetData()">Submit</button>
+    </div>
+
+    <div id="sec2" style="display: none;">
+        <p id="name"></p>
+        <button onclick="No()">No</button>
+        <button onclick="Yes(), submiTFrom()">Yes</button>
+
+    </div>
+
+    <div id="sec3" style="display: none;">
+        <p>
+            Currently, enrollment for this event is not available.
+        </p>
+    </div>
+    <div id="sec4" style="display: none;">
+        <p>
+            Your registration has been successfully submitted. You will receive more information via email.
+        </p>
+    </div>
+
+    <form method="POST" id="form" style="display: none;">
+
+        <input type="hidden" name="access_key" value="897fc19c-3a27-4b93-b91a-192dfe8f61c0">
+
+        <input type="text" name="enrollmentRequest" id="formData" required>
+
+        <input type="text" name="Title" id="formData" value="Request For CodeCraaft Javascript">
+
+        <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+
+        <button type="submit">Submit Form</button>
+
+        <div id="result"></div>
+
+    </form>
+
+</body>
+<script>
+    if (localStorage.getItem("ccStatus") == "n") {
+        No();
+    }
+    if (localStorage.getItem("ccStatus") == "o") {
+        document.getElementById("sec1").style.display = "none";
+        document.getElementById("sec2").style.display = "none";
+        document.getElementById("sec4").style.display = "block";
+        document.getElementById("sec3").style.display = "none";
+        // No();
+    }
+
+    const records = [
+        ["r24800m7", "Akash Santra", "santraa568@gmail.com", "7439406773"],
+        ["r24804m7", "SOUMYADIP DAS", "dassoumayadip1995@gmail.com", "7863979102"],
+        ["r24822f7", "MONIKA MANDAL", "itismonikahere@gmail.com", "8768396254"],
+        ["r012817temp", "Arpan Chakraborty", "chakrabortyarpan247@gmail.com", "8101282144"],
+        ["r706611temp", "JOY DAS", "joy70290@gmail.com", "8670662317"],
+        ["r414122temp", "Kanai Ch. Das", "daskanai192@gmail.com", "9641411804"],
+        ["r459405temp", "Sriparna Sett", "sriparnasett@gmail.com", "8145947125"],
+        ["r291529temp", "Manidipa Samanta", "samantamanidipa67@gmail.com", "7029155801"],
+        ["r391112temp", "SUDIPTA GHOSH", "sudiptaghosh120203@gmail.com", "7439116032"],
+        ["r443817temp", "NILIMA KARMAKAR", "nilimakarmakar1720@gmail.com", "7044385847"],
+        ["r974531temp", "Moupiya Chatterjee", "chatterjeem918@gmail.com", "8697458260"],
+        ["r394224temp", "Shubhranil Paul", "shubhranilpaul3@gmail.com", "7439428139"],
+        ["r756404temp", "Aniruddha das", "rajdas452005@gmail.com", "9875645155"],
+        ["r240323m496", "Soumojit barui", "soumobarui427@gmail.com", "8116138486"]
+    ];
+
+    function GetData() {
+        let usrinp = document.getElementById("id").value;
+        for (let index = 0; index < records.length; index++) {
+            const element = records[index];
+            if (usrinp == element[0]) {
+                current = element;
+                document.getElementById("sec1").style.display = "none";
+                document.getElementById("sec2").style.display = "block";
+                document.getElementById("name").innerText = `Hi ${element[1]}, do you own a computer, laptop, or tablet?`
+            }
+        }
+    }
+
+    function No() {
+        localStorage.setItem("ccStatus", "n");
+        document.getElementById("sec1").style.display = "none";
+        document.getElementById("sec2").style.display = "none";
+        document.getElementById("sec4").style.display = "none";
+        document.getElementById("sec3").style.display = "block";
+
+    }
+
+    function Yes() {
+        localStorage.setItem("ccStatus", "o");
+        document.getElementById("sec1").style.display = "none";
+        document.getElementById("sec2").style.display = "none";
+        document.getElementById("sec4").style.display = "block";
+        document.getElementById("sec3").style.display = "none";
+        console.log(current)
+        document.getElementById("formData").value = JSON.stringify(current);
+    }
+
+    const form = document.getElementById('form');
+    const result = document.getElementById('result');
+
+    function submiTFrom() {
+        // e.preventDefault();
+        const formData = new FormData(form);
+        const object = Object.fromEntries(formData);
+        const json = JSON.stringify(object);
+        result.innerHTML = "Please wait..."
+
+        fetch('https://api.web3forms.com/submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: json
+        })
+            .then(async (response) => {
+                let json = await response.json();
+                if (response.status == 200) {
+                    result.innerHTML = "Form submitted successfully";
+                } else {
+                    console.log(response);
+                    result.innerHTML = json.message;
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                result.innerHTML = "Something went wrong!";
+            })
+            .then(function () {
+                form.reset();
+                setTimeout(() => {
+                    result.style.display = "none";
+                }, 3000);
+            });
+    };
+    // 897fc19c-3a27-4b93-b91a-192dfe8f61c0
+
+</script>
+
+</html>
